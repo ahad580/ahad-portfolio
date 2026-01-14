@@ -101,7 +101,9 @@ export default function Hero() {
 
                 <div className="afterApart">
                     <h2 className="apartHeading">What Sets Me Apart..</h2>
-                    <p className="apartSub">Principles I bring to every build.</p>
+                     <p className="apartSub">Principles I bring to every build.</p>
+                    <p className="apartSub">Every build is optimized for speed.</p>
+                    <p className="apartSub">Clear process, no confusion.</p>
                 </div>
 
                 <div ref={cardsRef} className="cardSwapWrap">
@@ -170,3 +172,4 @@ export default function Hero() {
         </section>
     );
 }
+
