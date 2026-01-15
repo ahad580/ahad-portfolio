@@ -461,10 +461,14 @@ body::-webkit-scrollbar {
   background: rgba(255, 255, 255, 0.09);
   border: 1px solid #a200ff;
 }
-
+@media (min-width: 1025px){
+  .cardSwapWrap{
+    margin-left: -209px;
+  }
+}
 .cardSwapWrap {
   margin-top: 19px;
-  margin-left: -209px;
+  /* margin-left: -209px; */
   position: relative;
   width: 100%;
   height: 100%;
@@ -2591,4 +2595,5 @@ html {
   .logoTrack {
     gap: 36px;
   }
+
 }
