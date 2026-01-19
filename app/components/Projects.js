@@ -1,8 +1,12 @@
 "use client";
 import WalkieTalkieModel from "./WalkieTalkieModel";
-import { useRef } from "react";
+import { useRef, useLayoutEffect, useEffect } from "react";
 import useReveal from "./useReveal";
 import Magnetic from "./Magnetic";
+import gsap from "gsap";
+import ScrollTrigger from "gsap/dist/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const PROJECTS = [
   {
@@ -12,8 +16,10 @@ const PROJECTS = [
     link: "#",
     problem: "Customers had to wait too long to reach an agent, and chat wasn’t enough for product demos.",
     goal: "Enable instant, real-time video help inside the store without heavy UX or delays.",
-    solution: "Built a one-way live video flow using WebRTC + Socket.IO signaling with stable reconnect + low-latency UX.",
-    result: "Faster support sessions, smoother handoff, and noticeably higher engagement during assisted browsing.",
+    solution:
+      "Built a one-way live video flow using WebRTC + Socket.IO signaling with stable reconnect + low-latency UX.",
+    result:
+      "Faster support sessions, smoother handoff, and noticeably higher engagement during assisted browsing.",
   },
   {
     title: "E-Commerce Platform",
@@ -22,18 +28,23 @@ const PROJECTS = [
     link: "#",
     problem: "Slow pages and a backend that couldn’t scale well during traffic spikes.",
     goal: "Build a fast storefront with a clean checkout flow and scalable backend.",
-    solution: "Implemented Next.js frontend + Express APIs, optimized queries, and integrated Stripe with clean order flows.",
-    result: "Improved load times, more reliable checkout, and smoother admin operations.",
+    solution:
+      "Implemented Next.js frontend + Express APIs, optimized queries, and integrated Stripe with clean order flows.",
+    result:
+      "Improved load times, more reliable checkout, and smoother admin operations.",
   },
   {
     title: "AI Utilities Suite",
     desc: "Tooling that turns inputs into usable outputs with clean UI and predictable workflows.",
     stack: ["React", "APIs", "UX", "Optimization"],
     link: "#",
-    problem: "Users needed multiple tools but workflows were messy and inconsistent across pages.",
+    problem:
+      "Users needed multiple tools but workflows were messy and inconsistent across pages.",
     goal: "Make utility tools feel cohesive, fast, and simple to use.",
-    solution: "Built reusable UI patterns, consistent API wrappers, and predictable flows with performance optimizations.",
-    result: "Cleaner UX, faster task completion, and better retention across repeated usage.",
+    solution:
+      "Built reusable UI patterns, consistent API wrappers, and predictable flows with performance optimizations.",
+    result:
+      "Cleaner UX, faster task completion, and better retention across repeated usage.",
   },
 ];
 
@@ -83,6 +94,7 @@ const WEBSITES = [
 function ProjectCard({ p }) {
   return (
     <a href={p.link} className="projectCard">
+      <span className="cardGlow" aria-hidden="true" />
       <div className="projectTop">
         <span className="projectDot" />
         <h3 className="projectName">{p.title}</h3>
@@ -139,6 +151,8 @@ function ProjectCard({ p }) {
 function WebsiteCard({ s }) {
   return (
     <a className="siteCard2" href={s.url} target="_blank" rel="noreferrer">
+      <span className="cardGlow" aria-hidden="true" />
+
       <div className={`siteMedia2 ${s.mediaClass || ""}`}>
         <div className="siteQuad">
           {s.images.slice(0, 4).map((src, i) => (
@@ -181,13 +195,17 @@ function WebsiteCard({ s }) {
 export default function Projects() {
   const ref = useRef(null);
 
-  useReveal(ref, [".projectsHeader", ".projectCard", ".projectsBottom", ".afterchairRow"], {
-    start: "top 85%",
-    y: 18,
-    duration: 0.75,
-    stagger: 0.08,
-    ease: "power3.out",
-  });
+  useReveal(
+    ref,
+    [".projectsHeader", ".projectCard", ".projectsBottom", ".afterchairRow"],
+    {
+      start: "top 85%",
+      y: 18,
+      duration: 0.75,
+      stagger: 0.08,
+      ease: "power3.out",
+    }
+  );
 
   useReveal(ref, [".sitesHeader2", ".siteCard2"], {
     start: "top 88%",
@@ -197,12 +215,139 @@ export default function Projects() {
     ease: "power3.out",
   });
 
+  useLayoutEffect(() => {
+    const root = ref.current;
+    if (!root) return;
+
+    const ctx = gsap.context(() => {
+      const cards = gsap.utils.toArray(".projectCard, .siteCard2");
+
+      cards.forEach((card) => {
+        gsap.fromTo(
+          card,
+          { opacity: 0, y: 22, rotateX: 10, rotateY: -8, filter: "blur(10px)" },
+          {
+            opacity: 1,
+            y: 0,
+            rotateX: 0,
+            rotateY: 0,
+            filter: "blur(0px)",
+            duration: 0.9,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 88%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+
+        gsap.to(card, {
+          y: -10,
+          z: 18,
+          ease: "none",
+          scrollTrigger: {
+            trigger: card,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 0.7,
+          },
+        });
+      });
+
+      const siteCards = gsap.utils.toArray(".siteCard2");
+      siteCards.forEach((card) => {
+        const imgs = card.querySelectorAll(".siteQuadImg");
+        if (!imgs.length) return;
+
+        gsap.to(imgs, {
+          yPercent: -10,
+          ease: "none",
+          scrollTrigger: {
+            trigger: card,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 0.75,
+          },
+        });
+      });
+
+      ScrollTrigger.refresh();
+    }, root);
+
+    return () => ctx.revert();
+  }, []);
+
+  useEffect(() => {
+    const root = ref.current;
+    if (!root) return;
+
+    const cards = root.querySelectorAll(".projectCard, .siteCard2");
+    const isCoarse = typeof window !== "undefined" && window.matchMedia
+      ? window.matchMedia("(pointer: coarse)").matches
+      : false;
+
+    if (isCoarse) return;
+
+    const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+    const cleanup = [];
+
+    cards.forEach((card) => {
+      let raf = 0;
+
+      const onEnter = () => {
+        card.classList.add("tiltOn");
+      };
+
+      const onMove = (e) => {
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width;
+        const py = (e.clientY - r.top) / r.height;
+
+        const rx = clamp((0.5 - py) * 10, -8, 8);
+        const ry = clamp((px - 0.5) * 12, -10, 10);
+
+        const mx = clamp(px * 100, 0, 100);
+        const my = clamp(py * 100, 0, 100);
+
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          card.style.setProperty("--rx", `${rx}deg`);
+          card.style.setProperty("--ry", `${ry}deg`);
+          card.style.setProperty("--mx", `${mx}%`);
+          card.style.setProperty("--my", `${my}%`);
+        });
+      };
+
+      const onLeave = () => {
+        card.classList.remove("tiltOn");
+        card.style.setProperty("--rx", `0deg`);
+        card.style.setProperty("--ry", `0deg`);
+      };
+
+      card.addEventListener("pointerenter", onEnter);
+      card.addEventListener("pointermove", onMove);
+      card.addEventListener("pointerleave", onLeave);
+
+      cleanup.push(() => {
+        cancelAnimationFrame(raf);
+        card.removeEventListener("pointerenter", onEnter);
+        card.removeEventListener("pointermove", onMove);
+        card.removeEventListener("pointerleave", onLeave);
+      });
+    });
+
+    return () => cleanup.forEach((fn) => fn());
+  }, []);
+
   return (
     <section ref={ref} className="projectsSection" id="projects">
       <div className="projectsInner">
         <div className="projectsHeader">
           <h2 className="projectsTitle">Projects worth shipping.</h2>
-          <p className="projectsSub">Real builds. Clean architecture. Performance that holds.</p>
+          <p className="projectsSub">
+            Real builds. Clean architecture. Performance that holds.
+          </p>
         </div>
 
         <div className="projectsGrid">
