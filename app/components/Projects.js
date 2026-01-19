@@ -1,9 +1,8 @@
 "use client";
-// import WalkieTalkieModel from "./WalkieTalkieModel";
+import WalkieTalkieModel from "./WalkieTalkieModel";
 import { useRef } from "react";
 import useReveal from "./useReveal";
 import Magnetic from "./Magnetic";
-import ParallaxMedia from "./ParallaxMedia";
 
 const PROJECTS = [
   {
@@ -11,7 +10,6 @@ const PROJECTS = [
     desc: "One-way customer camera, agent video live. Socket.IO + WebRTC signaling with low-latency UX.",
     stack: ["Next.js", "WebRTC", "Socket.IO", "Node"],
     link: "#",
-
     problem: "Customers had to wait too long to reach an agent, and chat wasn’t enough for product demos.",
     goal: "Enable instant, real-time video help inside the store without heavy UX or delays.",
     solution: "Built a one-way live video flow using WebRTC + Socket.IO signaling with stable reconnect + low-latency UX.",
@@ -22,7 +20,6 @@ const PROJECTS = [
     desc: "Custom store experience with scalable backend and performance-focused frontend.",
     stack: ["Next.js", "Express", "SQL", "Stripe"],
     link: "#",
-
     problem: "Slow pages and a backend that couldn’t scale well during traffic spikes.",
     goal: "Build a fast storefront with a clean checkout flow and scalable backend.",
     solution: "Implemented Next.js frontend + Express APIs, optimized queries, and integrated Stripe with clean order flows.",
@@ -33,7 +30,6 @@ const PROJECTS = [
     desc: "Tooling that turns inputs into usable outputs with clean UI and predictable workflows.",
     stack: ["React", "APIs", "UX", "Optimization"],
     link: "#",
-
     problem: "Users needed multiple tools but workflows were messy and inconsistent across pages.",
     goal: "Make utility tools feel cohesive, fast, and simple to use.",
     solution: "Built reusable UI patterns, consistent API wrappers, and predictable flows with performance optimizations.",
@@ -48,7 +44,7 @@ const WEBSITES = [
     type: "Brand / Product Site",
     desc: "High-polish product storytelling with strong scroll rhythm and interactive motion.",
     tags: ["Smooth Scroll", "ScrollTrigger", "Transitions"],
-    image: "/canoo.svg",
+    images: ["/canooss1.png", "/canooss2.png", "/canooss3.png", "/canooss4.png"],
     mediaClass: "mediaCanoo",
     imgClass: "imgCanoo",
   },
@@ -58,7 +54,7 @@ const WEBSITES = [
     type: "E-commerce / Product",
     desc: "Clean product layout with premium motion and conversion-friendly structure.",
     tags: ["Ecom UX", "Parallax", "Microinteractions"],
-    image: "/cowboy.svg",
+    images: ["/c1.png", "/c2.png", "/c3.png", "/c4.png"],
     mediaClass: "mediaCowboy",
     imgClass: "imgCowboy",
   },
@@ -68,7 +64,7 @@ const WEBSITES = [
     type: "Agency / Interactive",
     desc: "Heavy interaction design, cinematic sections, and bold motion hierarchy.",
     tags: ["Creative Dev", "Animation", "GSAP-style"],
-    image: "/resn.ico",
+    images: ["/rss1.png", "/rss2.png", "/rss3.png", "/rss4.png"],
     mediaClass: "mediaResn",
     imgClass: "imgResn",
   },
@@ -78,7 +74,7 @@ const WEBSITES = [
     type: "Agency / Contact",
     desc: "Playful interaction patterns with magnetic hover and bold typography rhythm.",
     tags: ["Magnetic", "Hover", "Type"],
-    image: "/toy.png",
+    images: ["/toyss1.png", "/toyss2.png", "/toyss3.png", "/toyss4.png"],
     mediaClass: "mediaToyfight",
     imgClass: "imgToyfight",
   },
@@ -93,6 +89,7 @@ function ProjectCard({ p }) {
       </div>
 
       <p className="projectDesc">{p.desc}</p>
+
       <div className="caseStoryGrid">
         <div className="caseItem">
           <div className="caseLabel">
@@ -143,12 +140,18 @@ function WebsiteCard({ s }) {
   return (
     <a className="siteCard2" href={s.url} target="_blank" rel="noreferrer">
       <div className={`siteMedia2 ${s.mediaClass || ""}`}>
-        <ParallaxMedia
-          src={s.image}
-          alt={s.name}
-          strength={14}
-          className={`siteImg2 ${s.imgClass || ""}`}
-        />
+        <div className="siteQuad">
+          {s.images.slice(0, 4).map((src, i) => (
+            <div className="siteQuadCell" key={i}>
+              <img
+                src={src}
+                alt={`${s.name} ${i + 1}`}
+                className={`siteQuadImg ${s.imgClass || ""}`}
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="siteBody2">
@@ -189,8 +192,7 @@ export default function Projects() {
   useReveal(ref, [".sitesHeader2", ".siteCard2"], {
     start: "top 88%",
     y: 18,
-    dur: 0.75,
-    duration : 0.75,
+    duration: 0.75,
     stagger: 0.09,
     ease: "power3.out",
   });
@@ -228,7 +230,7 @@ export default function Projects() {
               </Magnetic>
             </div>
           </div>
-        </div>  
+        </div>
 
         <div className="sitesSection2" id="websites">
           <div className="sitesHeader2">
@@ -245,7 +247,6 @@ export default function Projects() {
           </div>
         </div>
       </div>
-
     </section>
   );
 }
