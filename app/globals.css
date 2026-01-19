@@ -2496,3 +2496,78 @@ html {
 .siteCard2:hover .siteQuadImg{
   transform: scale(1.06);
 }
+
+
+
+.projectsInner {
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+}
+
+.projectsGrid,
+.sitesGrid2 {
+  transform-style: preserve-3d;
+}
+
+.projectCard,
+.siteCard2 {
+  transform-style: preserve-3d;
+  will-change: transform, opacity, filter;
+  transform: translate3d(0, 0, 0) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--ty, 0px));
+  transition: transform 170ms ease, border-color 250ms ease, box-shadow 250ms ease, background 250ms ease;
+}
+
+.projectCard.tiltOn,
+.siteCard2.tiltOn {
+  --ty: -6px;
+}
+
+.cardGlow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 220ms ease;
+  background: radial-gradient(
+    circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255, 255, 255, 0.20),
+    rgba(255, 255, 255, 0.08),
+    transparent 55%
+  );
+  mix-blend-mode: screen;
+  z-index: 3;
+}
+
+.projectCard.tiltOn .cardGlow,
+.siteCard2.tiltOn .cardGlow {
+  opacity: 1;
+}
+
+.siteMedia2,
+.siteBody2 {
+  transform-style: preserve-3d;
+}
+
+.siteMedia2 {
+  transform: translateZ(18px);
+}
+
+.siteBody2 {
+  transform: translateZ(28px);
+}
+
+.siteTags2,
+.projectTags {
+  transform: translateZ(34px);
+}
+
+.siteArrow2,
+.projectArrow {
+  transform: translateZ(42px);
+}
+
+.siteQuadImg {
+  will-change: transform;
+}
+
